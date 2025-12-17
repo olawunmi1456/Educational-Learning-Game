@@ -775,6 +775,220 @@
             animation: spin 1s linear infinite;
         }
         
+        /* Login/Signup Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .auth-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .auth-modal-content {
+            background-color: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        
+        .auth-modal.active .auth-modal-content {
+            transform: scale(1);
+        }
+        
+        .auth-modal-header {
+            padding: 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .auth-modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .auth-close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .auth-close-modal:hover,
+        .auth-close-modal:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+        
+        .auth-modal-body {
+            padding: 2rem;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .auth-form-group {
+            position: relative;
+        }
+        
+        .auth-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .auth-form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .auth-form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 40px;
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .password-toggle:hover,
+        .password-toggle:focus {
+            background-color: #f0f0f0;
+            outline: none;
+        }
+        
+        .auth-form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .auth-switch-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .auth-switch-link {
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        .auth-switch-link:hover,
+        .auth-switch-link:focus {
+            color: var(--secondary);
+            outline: none;
+        }
+        
+        .auth-error {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .auth-error.show {
+            display: block;
+        }
+        
+        .user-menu {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-menu.active {
+            display: flex;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover,
+        .logout-btn:focus {
+            background-color: white;
+            color: var(--primary);
+            outline: none;
+        }
+        
         /* Notification */
         .notification {
             position: fixed;
@@ -1103,6 +1317,15 @@
                     <i class="fas fa-user-plus"></i> Sign Up
                 </button>
             </div>
+            
+            <!-- User Menu (shown when logged in) -->
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span class="user-name" id="userName"></span>
+                <button class="logout-btn" id="logoutBtn" aria-label="Logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
         </div>
     </header>
 
@@ -1289,6 +1512,50 @@
         </div>
     </div>
 
+    <!-- Login/Signup Modal -->
+    <div class="auth-modal" id="authModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2 class="auth-modal-title" id="authModalTitle">Login</h2>
+                <button class="auth-close-modal" id="authCloseModal" aria-label="Close authentication modal">
+                    &times;
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <form class="auth-form" id="authForm">
+                    <div class="auth-form-group">
+                        <label for="authEmail">Email Address</label>
+                        <input type="email" id="authEmail" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="auth-form-group">
+                        <label for="authPassword">Password</label>
+                        <input type="password" id="authPassword" required placeholder="Enter your password">
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="auth-error" id="authError">
+                        Invalid email or password. Please try again.
+                    </div>
+                    
+                    <div class="auth-form-actions">
+                        <button type="submit" class="btn btn-primary" id="authSubmitBtn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <div class="auth-switch-text">
+                            <span id="authSwitchText">Don't have an account?</span>
+                            <button type="button" class="auth-switch-link" id="authSwitchLink">
+                                Sign Up
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div class="notification" id="notification" role="alert" aria-live="polite"></div>
 
@@ -1335,6 +1602,158 @@
     </footer>
 
     <script>
+        // ============================
+        // USER AUTHENTICATION SYSTEM
+        // ============================
+        class UserAuth {
+            constructor() {
+                this.USERS_KEY = 'educational_games_users';
+                this.CURRENT_USER_KEY = 'current_user';
+                this.initStorage();
+            }
+            
+            initStorage() {
+                if (!localStorage.getItem(this.USERS_KEY)) {
+                    // Create some demo users for testing
+                    const demoUsers = [
+                        {
+                            id: 1,
+                            email: 'demo@example.com',
+                            password: 'demo123',
+                            name: 'Demo User',
+                            joined: new Date().toISOString(),
+                            games: []
+                        },
+                        {
+                            id: 2,
+                            email: 'test@example.com',
+                            password: 'test123',
+                            name: 'Test User',
+                            joined: new Date().toISOString(),
+                            games: []
+                        }
+                    ];
+                    localStorage.setItem(this.USERS_KEY, JSON.stringify(demoUsers));
+                }
+            }
+            
+            getAllUsers() {
+                try {
+                    return JSON.parse(localStorage.getItem(this.USERS_KEY)) || [];
+                } catch (e) {
+                    return [];
+                }
+            }
+            
+            getCurrentUser() {
+                try {
+                    return JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY));
+                } catch (e) {
+                    return null;
+                }
+            }
+            
+            setCurrentUser(user) {
+                localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+            }
+            
+            clearCurrentUser() {
+                localStorage.removeItem(this.CURRENT_USER_KEY);
+            }
+            
+            login(email, password) {
+                const users = this.getAllUsers();
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    // Remove password from stored user object for security
+                    const { password, ...userWithoutPassword } = user;
+                    this.setCurrentUser(userWithoutPassword);
+                    return { success: true, user: userWithoutPassword };
+                }
+                
+                return { success: false, message: 'Invalid email or password' };
+            }
+            
+            signup(email, password, name) {
+                const users = this.getAllUsers();
+                
+                // Check if user already exists
+                if (users.some(u => u.email === email)) {
+                    return { success: false, message: 'Email already registered' };
+                }
+                
+                // Validate email format
+                if (!this.validateEmail(email)) {
+                    return { success: false, message: 'Invalid email format' };
+                }
+                
+                // Validate password
+                if (password.length < 6) {
+                    return { success: false, message: 'Password must be at least 6 characters' };
+                }
+                
+                // Create new user
+                const newUser = {
+                    id: Date.now(), // Simple ID generation
+                    email: email,
+                    password: password, // In real app, this should be hashed
+                    name: name || email.split('@')[0], // Use part of email as name if not provided
+                    joined: new Date().toISOString(),
+                    games: []
+                };
+                
+                users.push(newUser);
+                localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+                
+                // Remove password from stored user object
+                const { password: _, ...userWithoutPassword } = newUser;
+                this.setCurrentUser(userWithoutPassword);
+                
+                return { success: true, user: userWithoutPassword };
+            }
+            
+            logout() {
+                this.clearCurrentUser();
+                return { success: true };
+            }
+            
+            validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            updateUser(userId, updates) {
+                const users = this.getAllUsers();
+                const userIndex = users.findIndex(u => u.id === userId);
+                
+                if (userIndex !== -1) {
+                    users[userIndex] = { ...users[userIndex], ...updates };
+                    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+                    
+                    // Update current user if it's the same user
+                    const currentUser = this.getCurrentUser();
+                    if (currentUser && currentUser.id === userId) {
+                        this.setCurrentUser({ ...currentUser, ...updates });
+                    }
+                    
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            getUserById(id) {
+                const users = this.getAllUsers();
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    const { password, ...userWithoutPassword } = user;
+                    return userWithoutPassword;
+                }
+                return null;
+            }
+        }
+
         // ============================
         // GAME STORAGE MANAGEMENT
         // ============================
@@ -1399,7 +1818,8 @@
                         totalSize: gameData.totalSize || 0,
                         uploadDate: new Date().toISOString(),
                         playCount: 0,
-                        type: 'uploaded'
+                        type: 'uploaded',
+                        userId: gameData.userId || null
                     };
                     
                     // Add to games array
@@ -1492,6 +1912,11 @@
                 localStorage.removeItem(this.STORAGE_KEY);
                 localStorage.removeItem(this.STATS_KEY);
                 this.initStorage();
+            }
+            
+            getUserGames(userId) {
+                const games = this.getAllGames();
+                return games.filter(game => game.userId === userId);
             }
         }
 
@@ -1865,11 +2290,247 @@
         }
 
         // ============================
+        // AUTHENTICATION UI MANAGER
+        // ============================
+        class AuthUIManager {
+            constructor(authSystem, platform) {
+                this.authSystem = authSystem;
+                this.platform = platform;
+                this.isLoginMode = true;
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.updateUI();
+            }
+            
+            setupEventListeners() {
+                // Login/Signup buttons
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    this.openAuthModal(true);
+                });
+                
+                document.getElementById('signupBtn').addEventListener('click', () => {
+                    this.openAuthModal(false);
+                });
+                
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    this.logout();
+                });
+                
+                // Auth modal close button
+                document.getElementById('authCloseModal').addEventListener('click', () => {
+                    this.closeAuthModal();
+                });
+                
+                // Auth form submit
+                document.getElementById('authForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleAuthSubmit();
+                });
+                
+                // Auth mode switch
+                document.getElementById('authSwitchLink').addEventListener('click', () => {
+                    this.toggleAuthMode();
+                });
+                
+                // Password toggle
+                document.getElementById('passwordToggle').addEventListener('click', () => {
+                    this.togglePasswordVisibility();
+                });
+                
+                // Close modal on ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && document.getElementById('authModal').classList.contains('active')) {
+                        this.closeAuthModal();
+                    }
+                });
+            }
+            
+            openAuthModal(isLogin = true) {
+                this.isLoginMode = isLogin;
+                this.updateAuthModal();
+                document.getElementById('authModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus on email field
+                setTimeout(() => {
+                    document.getElementById('authEmail').focus();
+                }, 100);
+            }
+            
+            closeAuthModal() {
+                document.getElementById('authModal').classList.remove('active');
+                document.body.style.overflow = '';
+                this.clearAuthForm();
+            }
+            
+            toggleAuthMode() {
+                this.isLoginMode = !this.isLoginMode;
+                this.updateAuthModal();
+            }
+            
+            updateAuthModal() {
+                const title = document.getElementById('authModalTitle');
+                const submitBtn = document.getElementById('authSubmitBtn');
+                const switchText = document.getElementById('authSwitchText');
+                const switchLink = document.getElementById('authSwitchLink');
+                
+                if (this.isLoginMode) {
+                    title.textContent = 'Login';
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                    submitBtn.textContent = 'Login';
+                    switchText.textContent = "Don't have an account?";
+                    switchLink.textContent = 'Sign Up';
+                } else {
+                    title.textContent = 'Sign Up';
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+                    submitBtn.textContent = 'Sign Up';
+                    switchText.textContent = "Already have an account?";
+                    switchLink.textContent = 'Login';
+                }
+                
+                this.clearAuthError();
+            }
+            
+            async handleAuthSubmit() {
+                const email = document.getElementById('authEmail').value.trim();
+                const password = document.getElementById('authPassword').value;
+                
+                // Basic validation
+                if (!email || !password) {
+                    this.showAuthError('Please fill in all fields');
+                    return;
+                }
+                
+                let result;
+                
+                if (this.isLoginMode) {
+                    result = this.authSystem.login(email, password);
+                } else {
+                    result = this.authSystem.signup(email, password);
+                }
+                
+                if (result.success) {
+                    this.showNotification(
+                        this.isLoginMode ? 'Login successful!' : 'Account created successfully!',
+                        'success'
+                    );
+                    
+                    this.closeAuthModal();
+                    this.updateUI();
+                    
+                    // Refresh games if needed
+                    if (this.platform) {
+                        this.platform.loadGames();
+                    }
+                } else {
+                    this.showAuthError(result.message || 'Authentication failed');
+                }
+            }
+            
+            logout() {
+                this.authSystem.logout();
+                this.showNotification('Logged out successfully', 'success');
+                this.updateUI();
+                
+                // Refresh games to hide user-specific content
+                if (this.platform) {
+                    this.platform.loadGames();
+                }
+            }
+            
+            updateUI() {
+                const currentUser = this.authSystem.getCurrentUser();
+                const authButtons = document.querySelector('.auth-buttons');
+                const userMenu = document.getElementById('userMenu');
+                const userAvatar = document.getElementById('userAvatar');
+                const userName = document.getElementById('userName');
+                
+                if (currentUser) {
+                    // User is logged in
+                    authButtons.style.display = 'none';
+                    userMenu.classList.add('active');
+                    
+                    // Set user info
+                    const initials = currentUser.name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                    
+                    userAvatar.textContent = initials;
+                    userName.textContent = currentUser.name;
+                } else {
+                    // User is not logged in
+                    authButtons.style.display = 'flex';
+                    userMenu.classList.remove('active');
+                }
+            }
+            
+            togglePasswordVisibility() {
+                const passwordInput = document.getElementById('authPassword');
+                const toggleButton = document.getElementById('passwordToggle');
+                const icon = toggleButton.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                    toggleButton.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.className = 'fas fa-eye';
+                    toggleButton.setAttribute('aria-label', 'Show password');
+                }
+            }
+            
+            clearAuthForm() {
+                document.getElementById('authEmail').value = '';
+                document.getElementById('authPassword').value = '';
+                this.clearAuthError();
+            }
+            
+            showAuthError(message) {
+                const errorElement = document.getElementById('authError');
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+            
+            clearAuthError() {
+                const errorElement = document.getElementById('authError');
+                errorElement.classList.remove('show');
+            }
+            
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            getCurrentUser() {
+                return this.authSystem.getCurrentUser();
+            }
+            
+            isLoggedIn() {
+                return this.authSystem.getCurrentUser() !== null;
+            }
+        }
+
+        // ============================
         // MAIN APPLICATION
         // ============================
         class GamePlatform {
             constructor() {
                 this.storage = new GameStorage();
+                this.authSystem = new UserAuth();
+                this.authUI = new AuthUIManager(this.authSystem, this);
                 this.uploadHandler = new GameUploadHandler();
                 this.gamePlayer = new GamePlayer();
                 this.gamePlayer.setPlatform(this);
@@ -3886,7 +4547,13 @@
                 
                 if (this.currentFilter !== 'all') {
                     if (this.currentFilter === 'uploaded') {
-                        filteredGames = storedGames;
+                        // Only show user's uploaded games when logged in
+                        const currentUser = this.authUI.getCurrentUser();
+                        if (currentUser) {
+                            filteredGames = this.storage.getUserGames(currentUser.id);
+                        } else {
+                            filteredGames = [];
+                        }
                     } else {
                         filteredGames = allGames.filter(game => game.category === this.currentFilter);
                     }
@@ -3965,7 +4632,7 @@
                             <button class="play-btn" data-game-id="${game.id}">
                                 <i class="fas fa-play"></i> Play Game
                             </button>
-                            ${game.type === 'uploaded' ? `
+                            ${game.type === 'uploaded' && this.canDeleteGame(game) ? `
                                 <button class="delete-btn" data-game-id="${game.id}">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -3975,6 +4642,11 @@
                 `;
                 
                 return card;
+            }
+            
+            canDeleteGame(game) {
+                const currentUser = this.authUI.getCurrentUser();
+                return currentUser && game.userId === currentUser.id;
             }
             
             formatCategory(category) {
@@ -4083,8 +4755,13 @@
                 
                 // Close modal on ESC
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && document.getElementById('gameModal').classList.contains('active')) {
-                        this.gamePlayer.closeGameModal();
+                    if (e.key === 'Escape') {
+                        if (document.getElementById('gameModal').classList.contains('active')) {
+                            this.gamePlayer.closeGameModal();
+                        }
+                        if (document.getElementById('authModal').classList.contains('active')) {
+                            this.authUI.closeAuthModal();
+                        }
                     }
                 });
                 
@@ -4095,15 +4772,6 @@
                         this.showNotification(`${id.replace(/([A-Z])/g, ' $1')} would open here`, 'info');
                     });
                 });
-                
-                // Login/Signup buttons
-                document.getElementById('loginBtn').addEventListener('click', () => {
-                    this.showNotification('Login functionality would be implemented here', 'info');
-                });
-                
-                document.getElementById('signupBtn').addEventListener('click', () => {
-                    this.showNotification('Sign up functionality would be implemented here', 'info');
-                });
             }
             
             setupUploadHandler() {
@@ -4113,15 +4781,37 @@
                 const cancelBtn = document.getElementById('cancelUploadBtn');
                 
                 // Click to select files
-                uploadBox.addEventListener('click', () => fileInput.click());
+                uploadBox.addEventListener('click', () => {
+                    const currentUser = this.authUI.getCurrentUser();
+                    if (!currentUser) {
+                        this.authUI.openAuthModal(true);
+                        this.showNotification('Please login to upload games', 'warning');
+                        return;
+                    }
+                    fileInput.click();
+                });
+                
                 uploadBox.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
+                        const currentUser = this.authUI.getCurrentUser();
+                        if (!currentUser) {
+                            this.authUI.openAuthModal(true);
+                            this.showNotification('Please login to upload games', 'warning');
+                            return;
+                        }
                         fileInput.click();
                     }
                 });
                 
                 // File input change
                 fileInput.addEventListener('change', async (e) => {
+                    const currentUser = this.authUI.getCurrentUser();
+                    if (!currentUser) {
+                        this.authUI.openAuthModal(true);
+                        this.showNotification('Please login to upload games', 'warning');
+                        return;
+                    }
+                    
                     try {
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
@@ -4195,6 +4885,13 @@
                 
                 // Save game button
                 saveBtn.addEventListener('click', async () => {
+                    const currentUser = this.authUI.getCurrentUser();
+                    if (!currentUser) {
+                        this.authUI.openAuthModal(true);
+                        this.showNotification('Please login to upload games', 'warning');
+                        return;
+                    }
+                    
                     try {
                         const title = document.getElementById('gameTitle').value.trim();
                         const category = document.getElementById('gameCategory').value;
@@ -4220,7 +4917,8 @@
                             ageRange,
                             mainFile,
                             files: processedFiles.files,
-                            totalSize: processedFiles.totalSize
+                            totalSize: processedFiles.totalSize,
+                            userId: currentUser.id
                         };
                         
                         // Save game
